@@ -58,27 +58,27 @@ stages:
                     env -0 | sort -z | tr '\0' '\n'
                   displayName: "Script: Dump environment"
 
-  - stage: Fourth
-    displayName: Fourth stage manual
-    trigger: manual
-    dependsOn: Third
-    jobs:
-      - job: DeployJob
-        steps:
-          - script: echo Hello, world!
-            displayName: "Run a one-line script"
+  # Not currently supported. Will fail with "Manually triggered stages cannot have dependencies. Please remove the dependsOn property."
+  # - stage: Fourth
+  #   displayName: Fourth stage manual
+  #   trigger: manual
+  #   dependsOn: Third
+  #   jobs:
+  #     - job: DeployJob
+  #       steps:
+  #         - script: echo Hello, world!
+  #           displayName: "Run a one-line script"
 
-          - script: |
-              free -m
-              echo ""
-              df -h
-              echo ""
-              env -0 | sort -z | tr '\0' '\n'
-            displayName: "Script: Dump environment"
+  #         - script: |
+  #             free -m
+  #             echo ""
+  #             df -h
+  #             echo ""
+  #             env -0 | sort -z | tr '\0' '\n'
+  #           displayName: "Script: Dump environment"
 
   - stage: Fifth
     displayName: Fifth stage deployment
-    dependsOn: Third
     trigger: manual
     jobs:
       - deployment: DeployWeb
