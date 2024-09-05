@@ -78,11 +78,11 @@ stages:
   #           displayName: "Script: Dump environment"
 
   - stage: Fifth
-    displayName: Fifth stage deployment
+    displayName: Fifth stage deployment with environment approval
     trigger: manual
     jobs:
       - deployment: DeployWeb
-        environment: "Environment2"
+        environment: "EnvironmentApproval"
         strategy:
           runOnce:
             deploy:
@@ -101,7 +101,7 @@ stages:
   - stage: Sixth
     displayName: Sixth stage manual with condition
     trigger: manual
-    condition: succeeded('First')
+    condition: and(succeeded('First'), succeeded('Fifth'))
     jobs:
       - job: DeployJob
         steps:
