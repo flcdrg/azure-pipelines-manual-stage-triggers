@@ -97,3 +97,21 @@ stages:
                     echo ""
                     env -0 | sort -z | tr '\0' '\n'
                   displayName: "Script: Dump environment"
+
+  - stage: Sixth
+    displayName: Sixth stage manual with condition
+    trigger: manual
+    condition: succeeded('First')
+    jobs:
+      - job: DeployJob
+        steps:
+          - script: echo Hello, world!
+            displayName: "Run a one-line script"
+
+          - script: |
+              free -m
+              echo ""
+              df -h
+              echo ""
+              env -0 | sort -z | tr '\0' '\n'
+            displayName: "Script: Dump environment"
