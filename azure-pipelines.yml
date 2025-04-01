@@ -39,7 +39,10 @@ stages:
             displayName: "Script: Dump environment"
 
   - stage: Third
-    displayName: Third stage deployment
+    displayName: Third stage deployment (depends on First and Second)
+    dependsOn:
+      - First
+      - Second
     jobs:
       - deployment: DeployWeb
         environment: "Environment1"
