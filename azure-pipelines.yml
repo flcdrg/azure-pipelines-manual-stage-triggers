@@ -22,7 +22,7 @@ stages:
             displayName: "Script: Dump environment"
 
   - stage: Second
-    displayName: Second stage manual
+    displayName: Manual Stage
     trigger: manual
     jobs:
       - job: DeployJob
@@ -30,7 +30,7 @@ stages:
           - checkout: none
 
   - stage: SecondAndAHalf
-    displayName: Second with Server Job
+    displayName: Manual Stage (Server Job)
     trigger: manual
     jobs:
       - job: DeployJob
