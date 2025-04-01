@@ -27,22 +27,26 @@ stages:
     jobs:
       - job: DeployJob
         steps:
-          - script: echo Hello, world!
-            displayName: "Run a one-line script"
+          - checkout: none
 
-          - script: |
-              free -m
-              echo ""
-              df -h
-              echo ""
-              env -0 | sort -z | tr '\0' '\n'
-            displayName: "Script: Dump environment"
+  - stage: SecondAndAHalf
+    displayName: Second with Server Job
+    trigger: manual
+    jobs:
+      - job: DeployJob
+        pool: server
+        steps:
+          - task: Delay@1
+            inputs:
+              delayForMinutes: 0
+            displayName: "Delay for 0 minutes"
 
   - stage: Third
     displayName: Third stage deployment (depends on First and Second)
     dependsOn:
       - First
       - Second
+      - SecondAndAHalf
     jobs:
       - deployment: DeployWeb
         environment: "Environment1"
@@ -61,24 +65,24 @@ stages:
                     env -0 | sort -z | tr '\0' '\n'
                   displayName: "Script: Dump environment"
 
-  # Not currently supported. Will fail with "Manually triggered stages cannot have dependencies. Please remove the dependsOn property."
-  - stage: Fourth
-    displayName: Fourth stage manual
-    trigger: manual
-    dependsOn: Third
-    jobs:
-      - job: DeployJob
-        steps:
-          - script: echo Hello, world!
-            displayName: "Run a one-line script"
+  # Not currently supported (As at 1st April 2025). Will fail with "Manually triggered stages cannot have dependencies. Please remove the dependsOn property."
+  # - stage: Fourth
+  #   displayName: Fourth stage manual
+  #   trigger: manual
+  #   dependsOn: Third
+  #   jobs:
+  #     - job: DeployJob
+  #       steps:
+  #         - script: echo Hello, world!
+  #           displayName: "Run a one-line script"
 
-          - script: |
-              free -m
-              echo ""
-              df -h
-              echo ""
-              env -0 | sort -z | tr '\0' '\n'
-            displayName: "Script: Dump environment"
+  #         - script: |
+  #             free -m
+  #             echo ""
+  #             df -h
+  #             echo ""
+  #             env -0 | sort -z | tr '\0' '\n'
+  #           displayName: "Script: Dump environment"
 
   - stage: Fifth
     displayName: Fifth stage deployment with environment approval
