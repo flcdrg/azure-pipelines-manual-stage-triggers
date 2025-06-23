@@ -42,13 +42,37 @@ stages:
             displayName: "Delay for 0 minutes"
 
   - stage: Third
-    displayName: Third stage deployment (depends on First and Second)
+    displayName: Third stage deployment (depends on First and Second) and has manual validation
     dependsOn:
       - First
       - Second
       - SecondAndAHalf
     jobs:
+      - job: preValidation
+        displayName: "Job before manual validation"
+        steps:
+          - checkout: none
+
+          - script: echo Hello, world!
+            displayName: "Run a one-line script"
+
+      - job: waitForValidation
+        displayName: Wait for external validation
+        pool: server
+        dependsOn: preValidation
+        timeoutInMinutes: 4320 # job times out in 3 days
+        steps:
+          - task: ManualValidation@1
+            timeoutInMinutes: 1440 # task times out in 1 day
+            inputs:
+              notifyUsers: |
+                david@gardiner.net.au
+              approvers:
+              instructions: "Please validate the build configuration and resume"
+              onTimeout: reject
+
       - deployment: DeployWeb
+        dependsOn: waitForValidation
         environment: "Environment1"
         strategy:
           runOnce:
@@ -112,6 +136,8 @@ stages:
     jobs:
       - job: DeployJob
         steps:
+          - checkout: none
+
           - script: echo Hello, world!
             displayName: "Run a one-line script"
 
